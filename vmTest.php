@@ -11,36 +11,220 @@ http://www.cyberforum.ru/cpp-beginners/thread1278283.html
 http://www.wasm.ru/forum/viewtopic.php?id=39642
 */
 $clientPurse = array(
-1 => 10,//номинал, количество
-2 => 10,
-5 => 10,
-10 => 10,
+    1 => 10, //номинал, количество
+    2 => 10,
+    5 => 10,
+    10 => 10,
 );
 
-$vmPurse = array(
-1 => 100,//номинал, количество
-2 => 100,
-5 => 100,
-10 => 100
-);
+function getVmPurse() {
+    return array(
+        1 => 100, //номинал, количество
+        2 => 100,
+        5 => 100,
+        10 => 100
+    );
+}
 
 $productsRange = array(
-'Чай' => array(13,10),//цена, количество
-'Кофе' => array(18,20),
-'Кофе с молоком' => array(21,20),
-'Сок' => array(35,15)
+    'Чай' => array(13, 10), //цена, количество
+    'Кофе' => array(18, 20),
+    'Кофе с молоком' => array(21, 20),
+    'Сок' => array(35, 15)
 );
+class Balance {
+    public $bestCaseFlag = true;//это может нам не подойти
+    public $variants = array();
+
+        /**
+     * Возвращает максимально возможное количество монет опреденного номинала для сдачи
+     *
+     * @param $change
+     * @param $coinRating
+     * @return int
+     */
+    public function getCoinsCount($change, $coinRating) {
+        $coinsCount = floor($change/$coinRating);
+
+        $vmPurse = getVmPurse();
+        if($coinsCount > $vmPurse[$coinRating]) {
+            $coinsCount = $vmPurse[$coinRating];
+            //$this->bestCaseFlag = false;
+        }
+
+        return $coinsCount;
+    }
+
+
+    public function getBalance($change) {
+
+        $vmPurse = getVmPurse();
+        //count($vmPurse)
+        $coinsRating = array_keys($vmPurse);
+        rsort($coinsRating);
+
+        $tmpChange = $change;
+        $tmpVariant = array();
+        foreach($coinsRating as $key => $coinRating) {
+
+            $currentFix = $coinRating;
+            $coinsCount = getCoinsCount($tmpChange, $currentFix);
+            for($i = $coinsCount; $i >= 0; $i--) {
+                $tmpChange %= $currentFix;
+                array_push($tmpVariant, $coinsCount);
+            }
+
+
+
+            if($tmpChange === 0) {
+                break;
+            }
+
+
+        }
+        if($tmpChange === 0 ) {
+                $this->variants[] = $tmpVariant;
+
+        }
+
+
+/*
+
+Ищем все варианты , фиксирую одну позицию
+
+ */
+
+
+
+
+        //floor(8/3) целое
+        //% остаток от деления
+
+
+
+    }
+}
 
 /**
-* Получить остаток внесенных денег
-*/
-function getBalance($balance, $vmPurse) {
-	//floor(8/3) целое
-	//% остаток от деления
-	foreach($vmPurse as $key => $value ) {
-		floor($balance/$key)
-	}
-	$keys = array_keys($vmPurse);
-		
-	
+ * Получить остаток внесенных денег
+ */
+
+$VmPurse
+  1 => 100, //номинал, количество
+        2 => 100,
+        5 => 100,
+        10 => 100
+
+
+function test($nominal,$quantity) {
+    for($i = $quantity; $i >= 0 ;$i--) {
+        test($nominal,$i);
+    }
 }
+
+foreach($VmPurse as $nominal => $quantity) {
+
+
+}
+
+$sdacha = 44;
+
+$result;
+$resultsQuantity = 100000;
+
+for($i = 0; $i < 100; $i++) {
+    for($j = 0; $j < 100; $j++) {
+        for($k = 0; $k < 100; $k++) {
+            for($m = 0; $m < 100; $m++) {
+
+                if($sdacha == $i + $j*2 + $k*5 + $m*10) {
+                    if($resultsQuantity > $i+$j+$k+$m) {
+                        $result = array($i,$j,$k,$m);
+                        $resultsQuantity = $i+$j+$k+$m;
+                    }
+
+                }
+            }
+        }
+        }
+    }
+
+print_r($result);
+
+
+
+
+
+/*
+ * it works
+
+
+function getVmPurse() {
+	return array(
+        10 => 100, //номинал, количество
+        5 => 100,
+        2 => 100,
+        1 => 100
+    );
+}
+
+ function getCoinsCount($change, $coinRating) {
+	$coinsCount = floor($change/$coinRating);
+
+	$vmPurse = getVmPurse();
+	if($coinsCount > $vmPurse[$coinRating]) {
+		$coinsCount = $vmPurse[$coinRating];
+		//$this->bestCaseFlag = false;
+	}
+
+	return $coinsCount;
+}
+
+
+
+$start = microtime(true);
+
+$sdacha = 2;
+
+$result = array();
+$resultsQuantity = 100000;
+
+$maxI = getCoinsCount($sdacha, 10);
+$maxJ = getCoinsCount($sdacha, 5);
+$maxK = getCoinsCount($sdacha, 2);
+$maxM = getCoinsCount($sdacha, 1);
+
+
+for($i = $maxI; $i >= 0; $i--) {
+	if($resultsQuantity < $i) continue;
+    for($j = $maxJ; $j >= 0; $j--) {
+		if($resultsQuantity < $i+$j) continue;
+        for($k = $maxK; $k >= 0; $k--) {
+			if($resultsQuantity < $i+$j+$k) continue;
+            for($m = $maxM; $m >= 0; $m--) {
+				if($resultsQuantity < $i+$j+$k+$m) continue;
+
+                if($sdacha == $i*10 + $j*5 + $k*2 + $m) {
+                    if($resultsQuantity > $i+$j+$k+$m) {
+                        $result = array($i,$j,$k,$m);
+                        $resultsQuantity = $i+$j+$k+$m;
+                    }
+
+                }
+            }
+        }
+        }
+    }
+
+print_r($result);
+
+echo '<br>Time: '.(microtime(true) - $start).' sec.';
+
+
+
+
+
+ */
+
+
+
